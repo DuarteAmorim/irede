@@ -28,13 +28,14 @@ namespace irede.infra.Repositories
             {
                 try
                 {
+                    dbConnection.Open();
                     produto.SetId(await dbConnection.QuerySingleAsync<int>(script, produto));
                     return produto;
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao adicionar o produto. Erro:{0}".ToFormat(ex.Message));
-                    return null;
+                    AddNotification("Erro ao adicionar o produto. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
                 }
             }
         }
@@ -46,12 +47,13 @@ namespace irede.infra.Repositories
             {
                 try
                 {
+                    dbConnection.Open();
                     return await dbConnection.QueryFirstOrDefaultAsync<Produto>(script, new { Id = id });
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao obter o produto por ID. Erro:{0}".ToFormat(ex.Message));
-                    return null;
+                    AddNotification("Erro ao obter o produto por ID. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
                 }
             }
         }
@@ -63,13 +65,14 @@ namespace irede.infra.Repositories
             {
                 try
                 {
+                    dbConnection.Open();
                     return await dbConnection.QueryAsync<Produto>(script);
                 }
                 catch (Exception ex)
                 {
                     // Log e tratamento da exceção
-                    AddNotification("Erro ao obter todos os produtos. Erro:{0}".ToFormat(ex.Message));
-                    return null;
+                    AddNotification("Erro ao obter todos os produtos. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
                 }
             }
         }
@@ -81,6 +84,7 @@ namespace irede.infra.Repositories
             {
                 try
                 {
+                    dbConnection.Open();
                     var rowsAffected = await dbConnection.ExecuteAsync(script, produto);
                     if (rowsAffected == 0)
                     {
@@ -91,8 +95,9 @@ namespace irede.infra.Repositories
                 catch (Exception ex)
                 {
                     // Log e tratamento da exceção
-                    AddNotification("Erro ao atualizar o produto. Erro: {0}".ToFormat(ex.Message));
-                    return;
+                    AddNotification("Erro ao atualizar o produto. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
+
                 }
             }
         }
@@ -104,18 +109,19 @@ namespace irede.infra.Repositories
             {
                 try
                 {
+                    dbConnection.Open();
                     var rowsAffected = await dbConnection.ExecuteAsync(script, new { Id = id });
                     if (rowsAffected == 0)
                     {
-                        AddNotification("Nenhum registro foi deletado. Verifique se o ID do produto é válido.");
+                        AddNotification("Nenhum registro foi apagado. Verifique se o ID do produto é válido.");
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
                     // Log e tratamento da exceção
-                    AddNotification("Erro ao deletar o produto.".ToFormat(ex.Message));
-                    return;
+                    AddNotification("Erro ao excluir o produto. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
                 }
             }
         }

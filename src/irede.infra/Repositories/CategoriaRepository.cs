@@ -34,8 +34,8 @@ namespace irede.infra.Repositories
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao adicionar a categoria. Erro: {0}".ToFormat(ex.Message));
-                    return null;
+                    AddNotification("Erro ao adicionar a categoria. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
                 }
             }
         }
@@ -53,8 +53,8 @@ namespace irede.infra.Repositories
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao obter a categoria por ID. Erro: {0}".ToFormat(ex.Message));
-                    return null;
+                    AddNotification("Erro ao obter a categoria por ID. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
                 }
             }
         }
@@ -72,8 +72,8 @@ namespace irede.infra.Repositories
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao obter todas as categorias. Erro: {0}".ToFormat(ex.Message));
-                    return null;
+                    AddNotification("Erro ao obter todas as categorias. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
                 }
             }
         }
@@ -96,8 +96,8 @@ namespace irede.infra.Repositories
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao atualizar a categoria. Erro: {0}".ToFormat(ex.Message));
-                    return;
+                    AddNotification("Erro ao atualizar a categoria. \nErro: {0}".ToFormat(ex.Message));
+                    throw;
                 }
             }
         }
@@ -120,7 +120,7 @@ namespace irede.infra.Repositories
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao deletar a categoria. Erro: {0}".ToFormat(ex.Message));
+                    AddNotification("Erro ao deletar a categoria. \nErro: {0}".ToFormat(ex.Message));
                     return;
                 }
             }

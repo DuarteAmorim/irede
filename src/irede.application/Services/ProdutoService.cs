@@ -18,7 +18,13 @@ namespace irede.application.Services
 
         public async Task<IEnumerable<Produto>> GetAllAsync()
         {
-            return await _produtoRepository.GetAllAsync();
+            try { return await _produtoRepository.GetAllAsync(); }
+            catch (Exception)
+            {
+                AddNotifications(_produtoRepository.Notifications);
+                throw;
+            }
+
         }
 
         public async Task<Produto> GetByIdAsync(int id)
@@ -42,101 +48,137 @@ namespace irede.application.Services
                 AddNotifications(_produtoRepository?.Notifications);
                 throw;
             }
-
-
         }
 
         public async Task<Produto> AddAsync(Produto produto)
         {
-            // Validações e regras de negócio
-            produto.Validate();
-            if (!produto.IsValid())
+            try
             {
-                AddNotifications(produto.Notifications);
-                return null;
+                // Validações e regras de negócio
+                produto.Validate();
+                if (!produto.IsValid())
+                {
+                    AddNotifications(produto.Notifications);
+                    return null;
+                }
+
+                // Verificar se a categoria existe
+                var categoria = await _categoriaRepository.GetByIdAsync(produto.Id_categoria);
+                if (!_categoriaRepository.IsValid())
+                {
+                    AddNotification("Categoria associada não encontrada.");
+                    return null;
+                }
+
+                return await _produtoRepository.AddAsync(produto);
+            }
+            catch (Exception)
+            {
+                AddNotifications(_produtoRepository.Notifications);
+                throw;
             }
 
-            // Verificar se a categoria existe
-            var categoria = await _categoriaRepository.GetByIdAsync(produto.Id_categoria);
-            if (!_categoriaRepository.IsValid())
-            {
-                AddNotification("Categoria associada não encontrada.");
-                return null;
-            }
-
-            return await _produtoRepository.AddAsync(produto);
         }
 
         public async Task UpdateAsync(Produto produto)
         {
-            // Validações e regras de negócio
-            produto.Validate();
-            if (!produto.IsValid())
+            try
             {
-                AddNotifications(produto.Notifications);
-                return;
+                // Validações e regras de negócio
+                produto.Validate();
+                if (!produto.IsValid())
+                {
+                    AddNotifications(produto.Notifications);
+                    return;
+                }
+
+
+                // Verificar se o produto existe
+                var existingProduto = await _produtoRepository.GetByIdAsync(produto.Id);
+                if (!_produtoRepository.IsValid())
+                {
+                    AddNotification("Produto não encontrado.");
+                    return;
+                }
+
+                // Verificar se a categoria existe
+                var categoria = await _categoriaRepository.GetByIdAsync(produto.Id_categoria);
+                if (!_categoriaRepository.IsValid())
+                {
+                    AddNotification("Categoria associada não encontrada.");
+                    return;
+                }
+
+                await _produtoRepository.UpdateAsync(produto);
             }
-
-
-            // Verificar se o produto existe
-            var existingProduto = await _produtoRepository.GetByIdAsync(produto.Id);
-            if (!_produtoRepository.IsValid())
+            catch (Exception)
             {
-                AddNotification("Produto não encontrado.");
-                return;
+                AddNotifications(_produtoRepository.Notifications);
+                throw;
             }
-
-            // Verificar se a categoria existe
-            var categoria = await _categoriaRepository.GetByIdAsync(produto.Id_categoria);
-            if (!_categoriaRepository.IsValid())
-            {
-                AddNotification("Categoria associada não encontrada.");
-                return;
-            }
-
-            await _produtoRepository.UpdateAsync(produto);
         }
 
         public async Task UpdatePartialAsync(Produto produto)
         {
-            // Verificar se o produto existe
-            var existingProduto = await _produtoRepository.GetByIdAsync(produto.Id);
-            if (existingProduto == null)
+            try
             {
-                produto.AddNotification("Produto não encontrado.");
-                return;
+
+                // Verificar se o produto existe
+                var existingProduto = await _produtoRepository.GetByIdAsync(produto.Id);
+                if (existingProduto == null)
+                {
+                    produto.AddNotification("Produto não encontrado.");
+                    return;
+                }
+
+
+                produto.Validate();
+                if (!existingProduto.IsValid())
+                {
+                    //produto.AddNotifications(existingProduto.Notifications);
+                    return;
+                }
+
+                // Verificar se a categoria existe
+                var categoria = await _categoriaRepository.GetByIdAsync(existingProduto.Id_categoria);
+                if (!_categoriaRepository.IsValid())
+                {
+                    AddNotification("Categoria associada não encontrada.");
+                    return;
+                }
+
+                await _produtoRepository.UpdateAsync(existingProduto);
+            }
+            catch (Exception)
+            {
+                AddNotifications(_produtoRepository.Notifications);
+                throw;
             }
 
-
-            produto.Validate();
-            if (!existingProduto.IsValid())
-            {
-                //produto.AddNotifications(existingProduto.Notifications);
-                return;
-            }
-
-            // Verificar se a categoria existe
-            var categoria = await _categoriaRepository.GetByIdAsync(existingProduto.Id_categoria);
-            if (!_categoriaRepository.IsValid())
-            {
-                AddNotification("Categoria associada não encontrada.");
-                return;
-            }
-
-            await _produtoRepository.UpdateAsync(existingProduto);
         }
 
         public async Task DeleteAsync(int id)
         {
-            // Verificar se o produto existe
-            var existingProduto = await _produtoRepository.GetByIdAsync(id);
-            if (!_produtoRepository.IsValid())
+            try
             {
-                AddNotification("Produto não encontrado.");
-                return;
+
+                // Verificar se o produto existe
+                var existingProduto = await _produtoRepository.GetByIdAsync(id);
+                if (existingProduto == null)
+                {
+                    AddNotification("Produto não encontrado.");
+
+                    return;
+                }
+
+                await _produtoRepository.DeleteAsync(id);
+            }
+            catch (Exception)
+            {
+                AddNotifications(_produtoRepository.Notifications);
+                throw;
             }
 
-            await _produtoRepository.DeleteAsync(id);
         }
 
         public void Dispose()

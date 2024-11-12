@@ -3,7 +3,7 @@
     public abstract class Notifiable: INotifiable
     {
 
-        public List<Notification> _notifications { get; private set; } = new List<Notification>();
+        private readonly List<Notification> _notifications;
         protected Notifiable() { _notifications = new List<Notification>(); }
 
         public IReadOnlyCollection<Notification> Notifications => _notifications;
