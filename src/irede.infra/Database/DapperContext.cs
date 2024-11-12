@@ -1,4 +1,5 @@
-﻿using irede.shared.Notifications;
+﻿using irede.shared.Extensions;
+using irede.shared.Notifications;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System.Data;
@@ -8,7 +9,7 @@ namespace irede.infra.Database
     /// <summary>
     /// factory pattern
     /// </summary>
-    public class DapperContext: Notifiable, IDapperContext
+    public class DapperContext : Notifiable, IDapperContext
     {
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
@@ -18,6 +19,7 @@ namespace irede.infra.Database
         {
             _configuration = configuration;
             _connectionString = _configuration.GetConnectionString("MySqlConnection");
+
         }
 
         public IDbConnection CreateConnection() => new MySqlConnection(_connectionString);
@@ -42,3 +44,6 @@ namespace irede.infra.Database
         }
     }
 }
+
+
+

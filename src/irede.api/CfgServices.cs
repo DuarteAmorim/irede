@@ -29,7 +29,6 @@ namespace irede.api
             _builder.Services.Configure<ScriptSettings>(_builder.Configuration.GetSection("ScriptSettings"));
             _builder.Services.AddSingleton<IScriptCache, ScriptCache>();
 
-            _builder.Services.AddControllers();
             _builder.Services.AddScoped<IDapperContext, DapperContext>();
 
 

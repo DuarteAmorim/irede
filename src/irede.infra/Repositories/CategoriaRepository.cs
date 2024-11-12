@@ -5,6 +5,7 @@ using irede.infra.Database;
 using irede.infra.Interfaces;
 using irede.shared.Extensions;
 using irede.shared.Notifications;
+using System.Data;
 
 namespace irede.infra.Repositories
 {
@@ -22,13 +23,23 @@ namespace irede.infra.Repositories
 
         public async Task<Categoria> AddAsync(Categoria categoria)
         {
+            //try
+            //{
+            //    using (IDbConnection con = new MySqlConnection(ConnString))
+            //    {
+            //        if (con.State == ConnectionState.Closed) con.Open(); var result = await con.QuerySingleOrDefaultAsync<int>(procedureName, parameters, commandType: CommandType.StoredProcedure); return result;
+            //    }
+            //}
+            //catch (Exception ex) { throw new Exception(ex.Message); }
 
             var script = _scriptCache.GetScript("AddCategoria.sql").ToLower();
+            
             using (var dbConnection = _context.CreateConnection())
             {
                 try
                 {
-                    dbConnection.Open();
+                   if (dbConnection.State == ConnectionState.Closed) dbConnection.Open();
+
                     categoria.SetId(await dbConnection.QuerySingleAsync<int>(script, categoria));
                     return categoria;
                 }
@@ -72,7 +83,10 @@ namespace irede.infra.Repositories
             {
                 try
                 {
-                    dbConnection.Open();
+                    if (dbConnection.State == ConnectionState.Closed) dbConnection.Open();
+
+
+                    //dbConnection.Open();
                     var result = await dbConnection.QueryAsync<Categoria>(script);
                     return result;
                 }

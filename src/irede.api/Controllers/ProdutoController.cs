@@ -1,12 +1,10 @@
 ﻿using irede.api.Controllers.Base;
 using irede.core.Dtos.Core;
-using irede.core.Entities;
 using irede.core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace irede.api.Controllers
 {
-
     [Route("api/[controller]")]
     public class ProdutoController : BaseController
     {

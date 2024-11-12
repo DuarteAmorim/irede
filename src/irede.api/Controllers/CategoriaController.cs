@@ -25,6 +25,8 @@ namespace irede.api.Controllers
             }
             catch (Exception ex)
             {
+                return await ResponseAsync(ex.InnerException, _iCategoriaService);
+
                 return await ResponseExceptionAsync(ex);
             }
         }

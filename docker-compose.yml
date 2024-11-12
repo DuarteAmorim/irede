@@ -7,12 +7,17 @@ services:
             context: .
             dockerfile: src/irede.api/Dockerfile
         ports: 
-            - "8080:8080"
-            # - "8081:8081"
+            - "8080:8080" #http
+            # - "8081:8081" #https
+        container_name: irede-api
         environment:
-            - ConnectionStrings__DefaultConnection=Server=irededb;Port=3036;Database=iredeDb;User=root;Password=root;
+            # - ConnectionStrings__DefaultConnection=Server=irededb;port=3306;database=iredeDb;uid=root;password=root;
+            - ConnectionStrings__DefaultConnection=Server=irededb;Port=3306;Database=iredeDb;Uid=root;Pwd=root;
+
         depends_on:
             - irededb
+        networks:
+            - irede-net
 
     irededb:
         image: mysql:8.0
@@ -20,18 +25,28 @@ services:
             MYSQL_ROOT_USER: root
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: iredeDb
+        container_name: irede-db
         ports:
-            - "3036:3306"
+            - "3306:3306"
+
         volumes:
             - db_data:/var/lib/mysql
             - ./init_db:/docker-entrypoint-initdb.d
+        networks:
+            - irede-net
     
-    phpmyadmin:
-        image: phpmyadmin:latest
-        ports:
-            - 8010:80
-        environment:
-            - PMA_ARBITRARY=1
+    # phpmyadmin:
+    #     image: phpmyadmin:latest
+    #     ports:
+    #         - 8010:80
+    #     environment:
+    #         - PMA_ARBITRARY=1
+    #     networks:
+    #         - irede-net
+networks:
+  irede-net:
+    name: custom_network_irede  
+    driver: bridge
 
 volumes:
-  db_data:    
+   db_data:    
