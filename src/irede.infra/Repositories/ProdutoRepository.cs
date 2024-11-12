@@ -1,10 +1,12 @@
 ﻿using Dapper;
+using irede.core.Dtos.Core;
 using irede.core.Entities;
 using irede.core.Interfaces.Repositories;
 using irede.infra.Database;
 using irede.infra.Interfaces;
 using irede.shared.Extensions;
 using irede.shared.Notifications;
+using System.Data;
 
 namespace irede.infra.Repositories
 {
@@ -12,6 +14,7 @@ namespace irede.infra.Repositories
     {
         private readonly IDapperContext _context;
         private readonly IScriptCache _scriptCache;
+        private bool _disposed = false;
 
         public ProdutoRepository(IDapperContext context, IScriptCache scriptCache)
         {
@@ -40,6 +43,7 @@ namespace irede.infra.Repositories
             }
         }
 
+
         public async Task<Produto> GetByIdAsync(int id)
         {
             var script = _scriptCache.GetScript("GetProdutoById.sql").ToLower();
@@ -48,7 +52,21 @@ namespace irede.infra.Repositories
                 try
                 {
                     dbConnection.Open();
-                    return await dbConnection.QueryFirstOrDefaultAsync<Produto>(script, new { Id = id });
+                    //QueryFirstOrDefaultAsync
+                    var produtos = await dbConnection.QueryAsync<Produto, Categoria, Produto>(
+                        script,
+                        (p, c) =>
+                        {
+                            p.SetCategoria(c);
+                            return p;
+                        },
+                        new { Id = id },
+                        splitOn: "Id"
+                    );
+                    var produto = produtos.FirstOrDefault();
+
+                    //return await dbConnection.QueryFirstOrDefaultAsync<Produto>(script, new { Id = id });
+                    return produto;
                 }
                 catch (Exception ex)
                 {
@@ -58,15 +76,25 @@ namespace irede.infra.Repositories
             }
         }
 
-        public async Task<IEnumerable<Produto>> GetAllAsync()
+        public async Task<IEnumerable<Produto>> GetAllAsync(int limit, int offset)
         {
-            var script = _scriptCache.GetScript("GetAllProdutos.sql").ToLower();
+            var script = _scriptCache.GetScript("GetAllProdutos.sql");
             using (var dbConnection = _context.CreateConnection())
             {
                 try
                 {
                     dbConnection.Open();
-                    return await dbConnection.QueryAsync<Produto>(script);
+                    var produtos = await dbConnection.QueryAsync<Produto, Categoria, Produto>(script,
+                        (p, c) =>
+                        {
+                            p.SetCategoria(c);
+                            return p;
+                        },
+                        new { Limit = limit, Offset = offset },
+                        splitOn: "Id"
+                    );
+
+                    return produtos;
                 }
                 catch (Exception ex)
                 {
@@ -75,6 +103,96 @@ namespace irede.infra.Repositories
                     throw;
                 }
             }
+        }
+        public async Task<IEnumerable<Produto>> SearchAsync(string termoNome, string termoDescricao)
+        {
+            var script = _scriptCache.GetScript("SearchProdutosByNomeOuDescricao.sql");
+            using (var dbConnection = _context.CreateConnection())
+            {
+                try
+                {
+                    dbConnection.Open();
+                    var produtos = await dbConnection.QueryAsync<Produto, Categoria, Produto>(
+                        script,
+                        (p, c) =>
+                        {
+                            p.SetCategoria(c);
+                            return p;
+                        },
+                        new
+                        {
+                            TermoNome = string.IsNullOrWhiteSpace(termoNome) ? null : termoNome,
+                            TermoDescricao = string.IsNullOrWhiteSpace(termoDescricao) ? null : termoDescricao
+                        },
+                        splitOn: "Id" // Deve corresponder ao alias no SQL
+                    );
+                    return produtos;
+                }
+                catch (Exception ex)
+                {
+                    AddNotification($"Erro ao buscar os produtos. \nErro: {ex.Message}");
+                    throw;
+                }
+            }
+        }
+
+        public async Task<IEnumerable<Produto>> SearchAsync(string termoNome, string termoDescricao, int limit, int offset)
+        {
+            var script = _scriptCache.GetScript("SearchProdutosByNomeOuDescricao.sql");
+           
+            using (var dbConnection = _context.CreateConnection())
+            {
+                try
+                {
+                    dbConnection.Open();
+                    var produtos = await dbConnection.QueryAsync<Produto, Categoria, Produto>(
+                        script,
+                        (p, c) =>
+                        {
+                            p.SetCategoria(c);
+                            return p;
+                        },
+                        new
+                        {
+                            TermoNome = string.IsNullOrWhiteSpace(termoNome) ? null : termoNome,
+                            TermoDescricao = string.IsNullOrWhiteSpace(termoDescricao) ? null : termoDescricao,
+                            Limit = limit,
+                            Offset = offset
+                        },
+                        splitOn: "Id"
+                    );
+                    return produtos;
+                }
+                catch (Exception ex)
+                {
+                    AddNotification($"Erro ao buscar os produtos. \nErro: {ex.Message}");
+                    throw;
+                }
+            }
+        }
+        public async Task<int> CountAllProdutosAsync()
+        {
+            // Obter o total de registros para calcular o total de páginas
+            var totalRegistrosScript = _scriptCache.GetScript("CountAllProdutos.sql").ToLower();
+            int totalRegistros;
+            using (var dbConnection = _context.CreateConnection())
+            {
+                try
+                {
+
+                    dbConnection.Open();
+
+                    totalRegistros = await dbConnection.QuerySingleAsync<int>(totalRegistrosScript, null);
+                    return totalRegistros;
+                }
+                catch (Exception ex)
+                {
+                    AddNotification($"Erro ao contar os produtos. \nErro: {ex.Message}");
+                    throw;
+                }
+            }
+
+
         }
 
         public async Task UpdateAsync(Produto produto)
@@ -125,5 +243,28 @@ namespace irede.infra.Repositories
                 }
             }
         }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                // Liberar recursos gerenciados que implementam IDisposable
+                _context?.Dispose();
+            }
+
+            // Liberar recursos não gerenciados (se houver)
+
+            _disposed = true;
+        }
+
+        
     }
 }

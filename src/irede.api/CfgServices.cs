@@ -1,4 +1,5 @@
-﻿using irede.application.Services;
+﻿using irede.application.MappingProfiles;
+using irede.application.Services;
 using irede.core.Interfaces.Repositories;
 using irede.core.Interfaces.Services;
 using irede.infra.Database;
@@ -22,6 +23,7 @@ namespace irede.api
         public void AddDependenceServices()
         {
         
+            _builder.Services.AddAutoMapper(typeof(MappingProfile)); // Especifica o tipo do perfil de mapeamento
 
             // Configurar ScriptSettings a partir do appsettings.json
             _builder.Services.Configure<ScriptSettings>(_builder.Configuration.GetSection("ScriptSettings"));

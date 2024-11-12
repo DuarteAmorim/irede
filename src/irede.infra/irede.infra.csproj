@@ -34,7 +34,19 @@
   <None Update="Scripts\GetAllCategorias.sql">
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </None>
+  <None Update="Scripts\CountAllProdutos.sql">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+  <None Update="Scripts\GetAllProdutosPaginated.sql">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
   <None Update="Scripts\GetCategoriaById.sql">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+  <None Update="Scripts\CountSearchProdutosByNameAndDescription.sql">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+  <None Update="Scripts\SearchProdutosByNomeOuDescricao.sql">
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </None>
   <None Update="Scripts\UpdateCategoria.sql">

@@ -49,7 +49,13 @@ namespace irede.infra.Repositories
                 {
                     dbConnection.Open();
 
-                    return await dbConnection.QueryFirstOrDefaultAsync<Categoria>(script, new { Id = id });
+                    var response = await dbConnection.QueryFirstOrDefaultAsync<Categoria>(script, new { Id = id });
+                    if (response==null)
+                    {
+                        AddNotification("Categoria não encontrada.");
+
+                    }
+                    return response;
                 }
                 catch (Exception ex)
                 {

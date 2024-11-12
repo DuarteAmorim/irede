@@ -57,8 +57,11 @@ namespace irede.application.Services
                     return null;
                 }
 
-                return await _categoriaRepository.AddAsync(newCategoria);
+                var response = await _categoriaRepository.AddAsync(newCategoria);
+                if (!_categoriaRepository.IsValid())
+                    AddNotifications(_categoriaRepository.Notifications);
 
+                return response;
             }
             catch (Exception)
             {

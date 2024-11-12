@@ -1,4 +1,5 @@
-﻿using irede.shared.Notifications;
+﻿using irede.core.Dtos.Core;
+using irede.shared.Notifications;
 
 namespace irede.core.Entities
 {
@@ -8,34 +9,38 @@ namespace irede.core.Entities
         public string Nome { get; private set; }
         public string Descricao { get; private set; }
         public double Preco { get; private set; }
-        public DateTime Data_validade { get; private set; }
+        public DateTime Data_Validade { get; private set; }
         public string Imagem { get; private set; }
-        public int Id_categoria { get; private set; }
-        public Categoria Categoria { get; private set; }
+        public int Id_Categoria { get; private set; }
+        public virtual Categoria Categoria { get; private set; }
+        public void SetCategoria(Categoria categoria)
+        {
+            Categoria = categoria;
+        }
 
-        public Produto(string nome, string descricao, double preco, DateTime dataValidade, string imagem, Categoria categoria)
+        public Produto(string nome, string descricao, double preco, DateTime dataValidade, string imagem, int idCategoria)
         {
             Nome = nome;
             Descricao = descricao;
             Preco = preco;
-            Data_validade = dataValidade;
+            Data_Validade = dataValidade;
             Imagem = imagem;
-            Categoria = categoria;
-            Id_categoria = categoria.Id;
+            Id_Categoria = idCategoria;
 
             Validate();
         }
 
-        public Produto(int id, string nome, string descricao, double preco, DateTime data_validade, string imagem, int id_categoria, Categoria categoria)
+        public Produto(int id, string nome, string descricao, double preco, DateTime data_validade, string imagem, int id_categoria)
         {
             Id = id;
             Nome = nome;
             Descricao = descricao;
             Preco = preco;
-            Data_validade = data_validade;
+            Data_Validade = data_validade;
             Imagem = imagem;
-            Id_categoria = id_categoria;
-            Categoria = categoria;
+            Id_Categoria = id_categoria;
+
+            
         }
 
         public void SetId(int id) => Id = id;
@@ -51,7 +56,7 @@ namespace irede.core.Entities
                 AddNotification("O preço deve ser um valor positivo.");
 
             //TODO: verificar desafio para validar isso aqui: validação acontece somento para um novo produto
-            if (Id>0 && Data_validade < DateTime.Now.Date) 
+            if (Id>0 && Data_Validade < DateTime.Now.Date) 
                 AddNotification("A data de validade não pode ser anterior à data atual.");
 
             if (string.IsNullOrEmpty(Imagem))
@@ -60,5 +65,19 @@ namespace irede.core.Entities
             if (Categoria == null)
                 AddNotification("O produto deve estar associado a uma categoria.");
         }
+        public void ValidateUpdate()
+        {
+            if (Id <= 0)
+                AddNotification($"O Id da categoria é inválido.");
+
+            Validate();
+        }
+
+        public static explicit operator Produto(ProdutoDto dto)
+        {
+            return new Produto(dto.Id, dto.Nome, dto.Descricao, dto.Preco, dto.Data_Validade, dto.Imagem, dto.CategoriaId);
+        }
+
+
     }
 }

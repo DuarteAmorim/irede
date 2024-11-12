@@ -19,7 +19,7 @@ namespace irede.core.Entities
         {
             Id = id;
             Nome = nome;
-            Validate();
+            
 
         }
 
@@ -29,8 +29,6 @@ namespace irede.core.Entities
         }
         public void Validate()
         {
-           
-
             if (string.IsNullOrEmpty(Nome) || string.IsNullOrWhiteSpace(Nome))
                 AddNotification("O nome da categoria é obrigatório nem possuir somente espaços vazios.");
 
@@ -48,7 +46,8 @@ namespace irede.core.Entities
 
         public static explicit operator Categoria(CategoriaDto dto)
         {
-            return new Categoria(dto.Id,dto.Nome);
+            return new Categoria(dto.Id, dto.Nome);
         }
+
     }
 }
