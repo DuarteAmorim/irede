@@ -1,0 +1,1 @@
+﻿DELETE FROM categoria WHERE id = @id;

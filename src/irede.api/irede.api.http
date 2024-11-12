@@ -1,0 +1,6 @@
+@irede.api_HostAddress = http://localhost:5055
+
+GET {{irede.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

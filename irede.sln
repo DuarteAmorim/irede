@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "irede.api", "src\irede.api\irede.api.csproj", "{05C30E03-6130-41EE-BD8B-3E671DBB386D}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{22F89047-3C2F-4439-8920-D12D4594B49A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "irede.core", "src\irede.core\irede.core.csproj", "{CA0A2D36-3284-4563-8107-EF6C20256115}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "irede.infra", "src\irede.infra\irede.infra.csproj", "{2A422857-D5E4-4B9D-BBDB-2FC9DC986BC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "irede.application", "src\irede.application\irede.application.csproj", "{B91B8B96-684C-41E6-B4E6-24FE8136F517}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "irede.shared", "src\irede.shared\irede.shared.csproj", "{0EF732BB-2044-4A62-8248-79E03F03E667}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05C30E03-6130-41EE-BD8B-3E671DBB386D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05C30E03-6130-41EE-BD8B-3E671DBB386D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05C30E03-6130-41EE-BD8B-3E671DBB386D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05C30E03-6130-41EE-BD8B-3E671DBB386D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22F89047-3C2F-4439-8920-D12D4594B49A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22F89047-3C2F-4439-8920-D12D4594B49A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22F89047-3C2F-4439-8920-D12D4594B49A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22F89047-3C2F-4439-8920-D12D4594B49A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA0A2D36-3284-4563-8107-EF6C20256115}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA0A2D36-3284-4563-8107-EF6C20256115}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA0A2D36-3284-4563-8107-EF6C20256115}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA0A2D36-3284-4563-8107-EF6C20256115}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A422857-D5E4-4B9D-BBDB-2FC9DC986BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A422857-D5E4-4B9D-BBDB-2FC9DC986BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A422857-D5E4-4B9D-BBDB-2FC9DC986BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A422857-D5E4-4B9D-BBDB-2FC9DC986BC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B91B8B96-684C-41E6-B4E6-24FE8136F517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B91B8B96-684C-41E6-B4E6-24FE8136F517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B91B8B96-684C-41E6-B4E6-24FE8136F517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B91B8B96-684C-41E6-B4E6-24FE8136F517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EF732BB-2044-4A62-8248-79E03F03E667}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EF732BB-2044-4A62-8248-79E03F03E667}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EF732BB-2044-4A62-8248-79E03F03E667}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EF732BB-2044-4A62-8248-79E03F03E667}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33994390-EAB1-42BF-9F78-5006880E6310}
+	EndGlobalSection
+EndGlobal
