@@ -48,27 +48,33 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-
+// Habilitar CORS
+app.UseCors("AllowAllOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     //app.UseSwagger();
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "IRede API v3");
-        options.DisplayRequestDuration();
-    }); ;
+    //app.UseSwagger();
+    //app.UseSwaggerUI(options =>
+    //{
+    //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "IRede API v3");
+    //    options.DisplayRequestDuration();
+    //}); ;
 
     //app.UseSwaggerUI();
 }
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "IRede API v4");
+    options.DisplayRequestDuration();
+}); ;
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-// Habilitar CORS
-app.UseCors("AllowAllOrigins");
+
 
 
 app.UseRouting();
