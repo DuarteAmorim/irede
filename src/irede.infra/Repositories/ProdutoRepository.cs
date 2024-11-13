@@ -38,7 +38,7 @@ namespace irede.infra.Repositories
                 catch (Exception ex)
                 {
                     AddNotification("Erro ao adicionar o produto. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
+                    return null;
                 }
             }
         }
@@ -71,14 +71,14 @@ namespace irede.infra.Repositories
                 catch (Exception ex)
                 {
                     AddNotification("Erro ao obter o produto por ID. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
+                    return null;
                 }
             }
         }
 
         public async Task<IEnumerable<Produto>> GetAllAsync(int limit, int offset)
         {
-            var script = _scriptCache.GetScript("GetAllProdutos.sql");
+            var script = _scriptCache.GetScript("GetAllProdutosPaginated.sql");
             using (var dbConnection = _context.CreateConnection())
             {
                 try
@@ -100,7 +100,7 @@ namespace irede.infra.Repositories
                 {
                     // Log e tratamento da exceção
                     AddNotification("Erro ao obter todos os produtos. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
+                    return null;
                 }
             }
         }
@@ -131,7 +131,8 @@ namespace irede.infra.Repositories
                 catch (Exception ex)
                 {
                     AddNotification($"Erro ao buscar os produtos. \nErro: {ex.Message}");
-                    throw;
+                    return null;
+
                 }
             }
         }
@@ -166,7 +167,8 @@ namespace irede.infra.Repositories
                 catch (Exception ex)
                 {
                     AddNotification($"Erro ao buscar os produtos. \nErro: {ex.Message}");
-                    throw;
+                    return null;
+
                 }
             }
         }
@@ -179,7 +181,6 @@ namespace irede.infra.Repositories
             {
                 try
                 {
-
                     dbConnection.Open();
 
                     totalRegistros = await dbConnection.QuerySingleAsync<int>(totalRegistrosScript, null);
@@ -188,11 +189,9 @@ namespace irede.infra.Repositories
                 catch (Exception ex)
                 {
                     AddNotification($"Erro ao contar os produtos. \nErro: {ex.Message}");
-                    throw;
+                    return 0;
                 }
             }
-
-
         }
 
         public async Task UpdateAsync(Produto produto)
@@ -214,7 +213,7 @@ namespace irede.infra.Repositories
                 {
                     // Log e tratamento da exceção
                     AddNotification("Erro ao atualizar o produto. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
+                    return;
 
                 }
             }
@@ -239,7 +238,7 @@ namespace irede.infra.Repositories
                 {
                     // Log e tratamento da exceção
                     AddNotification("Erro ao excluir o produto. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
+                    return;
                 }
             }
         }

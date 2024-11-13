@@ -21,35 +21,7 @@ namespace irede.infra.Repositories
             _scriptCache = scriptCache;
         }
 
-        public async Task<Categoria> AddAsync(Categoria categoria)
-        {
-            //try
-            //{
-            //    using (IDbConnection con = new MySqlConnection(ConnString))
-            //    {
-            //        if (con.State == ConnectionState.Closed) con.Open(); var result = await con.QuerySingleOrDefaultAsync<int>(procedureName, parameters, commandType: CommandType.StoredProcedure); return result;
-            //    }
-            //}
-            //catch (Exception ex) { throw new Exception(ex.Message); }
-
-            var script = _scriptCache.GetScript("AddCategoria.sql").ToLower();
-            
-            using (var dbConnection = _context.CreateConnection())
-            {
-                try
-                {
-                   if (dbConnection.State == ConnectionState.Closed) dbConnection.Open();
-
-                    categoria.SetId(await dbConnection.QuerySingleAsync<int>(script, categoria));
-                    return categoria;
-                }
-                catch (Exception ex)
-                {
-                    AddNotification("Erro ao adicionar a categoria. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
-                }
-            }
-        }
+        
 
         public async Task<Categoria> GetByIdAsync(int id)
         {
@@ -61,17 +33,15 @@ namespace irede.infra.Repositories
                     dbConnection.Open();
 
                     var response = await dbConnection.QueryFirstOrDefaultAsync<Categoria>(script, new { Id = id });
-                    if (response==null)
-                    {
-                        AddNotification("Categoria não encontrada.");
+                    
+                    if (response==null) AddNotification("Categoria não encontrada.");
 
-                    }
                     return response;
                 }
                 catch (Exception ex)
                 {
                     AddNotification("Erro ao obter a categoria por ID. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
+                    return null;
                 }
             }
         }
@@ -93,11 +63,32 @@ namespace irede.infra.Repositories
                 catch (Exception ex)
                 {
                     AddNotification("Erro ao obter todas as categorias. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
+                    return null;
                 }
             }
         }
 
+        public async Task<Categoria> AddAsync(Categoria categoria)
+        {
+            var script = _scriptCache.GetScript("AddCategoria.sql").ToLower();
+
+            using (var dbConnection = _context.CreateConnection())
+            {
+                try
+                {
+                    if (dbConnection.State == ConnectionState.Closed) dbConnection.Open();
+
+                    categoria.SetId(await dbConnection.QuerySingleAsync<int>(script, categoria));
+                    return categoria;
+                }
+                catch (Exception ex)
+                {
+                    AddNotification("Erro ao adicionar a categoria. \nErro: {0}".ToFormat(ex.Message));
+                    return null;
+
+                }
+            }
+        }
         public async Task UpdateAsync(Categoria categoria)
         {
             var script = _scriptCache.GetScript("UpdateCategoria.sql").ToLower();
@@ -117,7 +108,7 @@ namespace irede.infra.Repositories
                 catch (Exception ex)
                 {
                     AddNotification("Erro ao atualizar a categoria. \nErro: {0}".ToFormat(ex.Message));
-                    throw;
+                    return;
                 }
             }
         }

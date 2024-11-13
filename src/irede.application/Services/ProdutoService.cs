@@ -3,6 +3,7 @@ using irede.core.Dtos.Core;
 using irede.core.Entities;
 using irede.core.Interfaces.Repositories;
 using irede.core.Interfaces.Services;
+using irede.shared.Extensions;
 using irede.shared.Notifications;
 
 namespace irede.application.Services
@@ -24,7 +25,8 @@ namespace irede.application.Services
 
         public async Task<PaginatedResult<ProdutoDto>> GetAllAsync(int pagina, int tamanhoPagina)
         {
-            try {
+            try
+            {
                 //num da página
                 if (pagina <= 0)
                 {
@@ -43,10 +45,10 @@ namespace irede.application.Services
                 var result = await _iProdutoRepository.GetAllAsync(tamanhoPagina, offset);
 
                 var produtosDto = _mapper.Map<IEnumerable<ProdutoDto>>(result);
-                
+
 
                 int totalRegistros = await _iProdutoRepository.CountAllProdutosAsync();
-                
+
                 int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)tamanhoPagina);
 
                 var pagResult = new PaginatedResult<ProdutoDto>
@@ -60,10 +62,13 @@ namespace irede.application.Services
 
                 return pagResult;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                AddNotifications(_iProdutoRepository.Notifications);
-                throw;
+                if (this.IsValid())
+                    AddNotification("Erro ao tentar cadastrar produto. \nErro: {0}".ToFormat(ex.Message));
+                else
+                    AddNotifications(_iProdutoRepository.Notifications);
+                return null;
             }
 
         }
@@ -87,8 +92,11 @@ namespace irede.application.Services
             }
             catch (Exception ex)
             {
-                AddNotifications(_iProdutoRepository.Notifications);
-                throw;
+                if (this.IsValid())
+                    AddNotification("Erro ao tentar contsultar produto. \nErro: {0}".ToFormat(ex.Message));
+                else
+                    AddNotifications(_iProdutoRepository.Notifications);
+                return null;
             }
         }
 
@@ -96,20 +104,21 @@ namespace irede.application.Services
         {
             try
             {
-                //var newProduto = (Produto)produtoDto;
-                var newProduto = _mapper.Map<Produto>(produtoDto);
+                var newProduto = (Produto)produtoDto;
+                newProduto.Validate();
                 if (!newProduto.IsValid())
                 {
                     AddNotifications(newProduto.Notifications);
                     return null;
                 }
 
-                var categoria = await _iCategoriaRepository.GetByIdAsync(newProduto.Id_Categoria);
+                var categoria = await _iCategoriaRepository.GetByIdAsync(newProduto.CategoriaId);
                 if (!_iCategoriaRepository.IsValid())
                 {
                     AddNotifications(_iCategoriaRepository.Notifications);
                     return null;
                 }
+                newProduto.SetCategoria(categoria);
 
                 var response = await _iProdutoRepository.AddAsync(newProduto);
 
@@ -120,10 +129,12 @@ namespace irede.application.Services
 
                 return dto;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (this.IsValid())
+                    AddNotification("Erro ao tentar cadastrar produto. \nErro: {0}".ToFormat(ex.Message));
                 AddNotifications(_iProdutoRepository.Notifications);
-                throw;
+                return null;
             }
 
         }
@@ -151,7 +162,7 @@ namespace irede.application.Services
                 }
 
                 // Verificar se a categoria existe
-                var categoria = await _iCategoriaRepository.GetByIdAsync(newProduto.Id_Categoria);
+                var categoria = await _iCategoriaRepository.GetByIdAsync(newProduto.CategoriaId);
                 if (!_iCategoriaRepository.IsValid())
                 {
                     AddNotifications(_iProdutoRepository.Notifications);
@@ -162,15 +173,18 @@ namespace irede.application.Services
                 _mapper.Map(produtoDto, existingProduto);
 
                 await _iProdutoRepository.UpdateAsync(existingProduto);
-                
+
                 if (!_iProdutoRepository.IsValid())
                     AddNotifications(_iProdutoRepository.Notifications);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                AddNotifications(_iProdutoRepository.Notifications);
-                throw;
+                if (this.IsValid())
+                    AddNotification("Erro ao tentar atualizar produto. \nErro: {0}".ToFormat(ex.Message));
+                else
+                    AddNotifications(_iProdutoRepository.Notifications);
+                return;
             }
         }
 
@@ -198,7 +212,7 @@ namespace irede.application.Services
                 }
 
                 // Verificar se a categoria existe
-                var categoria = await _iCategoriaRepository.GetByIdAsync(newProduto.Id_Categoria);
+                var categoria = await _iCategoriaRepository.GetByIdAsync(newProduto.CategoriaId);
                 if (!_iCategoriaRepository.IsValid())
                 {
                     AddNotifications(_iProdutoRepository.Notifications);
@@ -213,10 +227,13 @@ namespace irede.application.Services
                 if (!_iProdutoRepository.IsValid())
                     AddNotifications(_iProdutoRepository.Notifications);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                AddNotifications(_iProdutoRepository.Notifications);
-                throw;
+                if (this.IsValid())
+                    AddNotification("Erro ao tentar atualizar produto. \nErro: {0}".ToFormat(ex.Message));
+                else
+                    AddNotifications(_iProdutoRepository.Notifications);
+                return;
             }
 
         }
@@ -239,10 +256,13 @@ namespace irede.application.Services
                 if (!_iProdutoRepository.IsValid())
                     AddNotifications(_iProdutoRepository.Notifications);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                AddNotifications(_iProdutoRepository.Notifications);
-                throw;
+                if (this.IsValid())
+                    AddNotification("Erro ao tentar excluir produto. \nErro: {0}".ToFormat(ex.Message));
+                else
+                    AddNotifications(_iProdutoRepository.Notifications);
+                return;
             }
 
         }
@@ -293,8 +313,11 @@ namespace irede.application.Services
             }
             catch (Exception ex)
             {
-                AddNotifications(_iProdutoRepository.Notifications);
-                throw;
+                if (this.IsValid())
+                    AddNotification("Erro ao durante a consulta de produtos. \nErro: {0}".ToFormat(ex.Message));
+                else
+                    AddNotifications(_iProdutoRepository.Notifications);
+                return null;
             }
         }
 

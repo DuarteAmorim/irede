@@ -16,7 +16,7 @@ namespace irede.api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -27,7 +27,6 @@ namespace irede.api.Controllers
             {
                 return await ResponseAsync(ex.InnerException, _iCategoriaService);
 
-                return await ResponseExceptionAsync(ex);
             }
         }
 

@@ -8,7 +8,10 @@ namespace irede.core.Entities
         public int Id { get; private set; }
         public string Nome { get; private set; }
 
-        
+        public Categoria()
+        {
+                
+        }
         public Categoria(string nome)
         {
             Nome = nome;

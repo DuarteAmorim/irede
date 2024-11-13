@@ -23,7 +23,7 @@ namespace irede.core.Dtos.Core
                 Preco = entidade.Preco,
                 Data_Validade = entidade.Data_Validade,
                 Imagem = entidade.Imagem,
-                CategoriaId = entidade.Id_Categoria
+                CategoriaId = entidade.CategoriaId
             };
         }
     }

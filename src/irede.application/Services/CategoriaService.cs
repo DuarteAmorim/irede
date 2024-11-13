@@ -42,7 +42,7 @@ namespace irede.application.Services
             catch (Exception ex)
             {
                 AddNotifications(_categoriaRepository?.Notifications);
-                throw;
+                return null;
             }
         }
 
@@ -51,6 +51,8 @@ namespace irede.application.Services
             try
             {
                 var newCategoria = (Categoria)categoriaDto;
+                newCategoria.Validate();
+
                 if (!newCategoria.IsValid())
                 {
                     AddNotifications(newCategoria.Notifications);
@@ -66,7 +68,7 @@ namespace irede.application.Services
             catch (Exception)
             {
                 AddNotifications(_categoriaRepository.Notifications);
-                throw;
+                return null;
             }
 
         }
@@ -101,7 +103,7 @@ namespace irede.application.Services
             catch (Exception)
             {
                 AddNotifications(_categoriaRepository.Notifications);
-                throw;
+                return;
             }
         }
 
@@ -136,7 +138,7 @@ namespace irede.application.Services
             catch (Exception)
             {
                 AddNotifications(_categoriaRepository.Notifications);
-                throw;
+                return;
             }
         }
 
@@ -162,7 +164,7 @@ namespace irede.application.Services
             catch (Exception)
             {
                 AddNotifications(_categoriaRepository.Notifications);
-                throw;
+                return;
             }
         }
 

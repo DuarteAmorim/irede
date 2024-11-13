@@ -11,13 +11,16 @@ namespace irede.core.Entities
         public double Preco { get; private set; }
         public DateTime Data_Validade { get; private set; }
         public string Imagem { get; private set; }
-        public int Id_Categoria { get; private set; }
+        public int CategoriaId { get; private set; }
         public virtual Categoria Categoria { get; private set; }
         public void SetCategoria(Categoria categoria)
         {
             Categoria = categoria;
         }
-
+        public Produto()
+        {
+                
+        }
         public Produto(string nome, string descricao, double preco, DateTime dataValidade, string imagem, int idCategoria)
         {
             Nome = nome;
@@ -25,7 +28,7 @@ namespace irede.core.Entities
             Preco = preco;
             Data_Validade = dataValidade;
             Imagem = imagem;
-            Id_Categoria = idCategoria;
+            CategoriaId = idCategoria;
 
             Validate();
         }
@@ -38,7 +41,7 @@ namespace irede.core.Entities
             Preco = preco;
             Data_Validade = data_validade;
             Imagem = imagem;
-            Id_Categoria = id_categoria;
+            CategoriaId = id_categoria;
 
             
         }
@@ -55,15 +58,11 @@ namespace irede.core.Entities
             if (Preco <= 0)
                 AddNotification("O preço deve ser um valor positivo.");
 
-            //TODO: verificar desafio para validar isso aqui: validação acontece somento para um novo produto
             if (Id>0 && Data_Validade < DateTime.Now.Date) 
                 AddNotification("A data de validade não pode ser anterior à data atual.");
 
             if (string.IsNullOrEmpty(Imagem))
                 AddNotification("A imagem do produto é obrigatória.");
-
-            if (Categoria == null)
-                AddNotification("O produto deve estar associado a uma categoria.");
         }
         public void ValidateUpdate()
         {

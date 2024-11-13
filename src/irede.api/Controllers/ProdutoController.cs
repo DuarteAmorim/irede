@@ -20,7 +20,7 @@ namespace irede.api.Controllers
         {
             try
             {
-                var produtos = await _iProdutoService.GetAllAsync();
+                var produtos = await _iProdutoService.GetAllAsync(pagina, tamanhoPagina);
                 return await ResponseAsync(produtos, _iProdutoService);
             }
             catch (Exception ex)
@@ -53,7 +53,7 @@ namespace irede.api.Controllers
         /// <param name="tamanhoPagina">Tamanho da página</param>
         /// <returns>Objeto PaginatedResult com lista de ProdutoDto e metadados de paginação ou BadRequest</returns>
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery]string termoNome=null, [FromQuery] string termoDescricao=null, [FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
+        public async Task<IActionResult> Search([FromQuery] string termoNome = null, [FromQuery] string termoDescricao = null, [FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
             try
             {

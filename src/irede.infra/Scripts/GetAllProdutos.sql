@@ -5,7 +5,7 @@
     p.preco, 
     p.data_validade, 
     p.imagem, 
-    p.id_categoria,
+    p.id_categoria as categoriaid,
     c.id AS Id, 
     c.nome AS Nome
 FROM 

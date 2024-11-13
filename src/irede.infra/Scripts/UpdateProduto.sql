@@ -4,5 +4,5 @@
     Preco = @Preco,
     DataValidade = @DataValidade,
     Imagem = @Imagem,
-    CategoriaId = @CategoriaId
+    id_categoria = @CategoriaId
 WHERE Id = @Id;
