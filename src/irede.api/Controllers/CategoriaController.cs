@@ -1,5 +1,5 @@
 ﻿using irede.api.Controllers.Base;
-using irede.core.Entities;
+using irede.core.Dtos.Core;
 using irede.core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +16,7 @@ namespace irede.api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -25,7 +25,8 @@ namespace irede.api.Controllers
             }
             catch (Exception ex)
             {
-                return await ResponseExceptionAsync(ex);
+                return await ResponseAsync(ex.InnerException, _iCategoriaService);
+
             }
         }
 
@@ -44,12 +45,17 @@ namespace irede.api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Categoria categoriaDto)
+        public async Task<IActionResult> Post([FromBody] CategoriaDto categoriaDto)
         {
             try
             {
                 var categoria = await _iCategoriaService.AddAsync(categoriaDto);
-                return await ResponseAsync(categoria, _iCategoriaService);
+                var result = "";
+                if (_iCategoriaService.IsValid())
+                {
+                    result = "Categoria incluída com sucesso.";
+                }
+                return await ResponseAsync(result, _iCategoriaService);
             }
             catch (Exception ex)
             {
@@ -58,12 +64,17 @@ namespace irede.api.Controllers
         }
 
         [HttpPut()]
-        public async Task<IActionResult> Put([FromBody] Categoria categoria)
+        public async Task<IActionResult> Put([FromBody] CategoriaDto categoriaDto)
         {
             try
             {
-                await _iCategoriaService.UpdateAsync(categoria);
-                return await ResponseAsync(categoria, _iCategoriaService);
+                await _iCategoriaService.UpdateAsync(categoriaDto);
+                var result = "";
+                if (_iCategoriaService.IsValid())
+                {
+                    result = "Categoria alterada com sucesso.";
+                }
+                return await ResponseAsync(result, _iCategoriaService);
             }
             catch (Exception ex)
             {
@@ -72,12 +83,17 @@ namespace irede.api.Controllers
         }
 
         [HttpPatch()]
-        public async Task<IActionResult> Patch([FromBody] Categoria categoria)
+        public async Task<IActionResult> Patch([FromBody] CategoriaDto categoriaDto)
         {
             try
             {
-                await _iCategoriaService.UpdatePartialAsync(categoria);
-                return await ResponseAsync(categoria, _iCategoriaService);
+                await _iCategoriaService.UpdatePartialAsync(categoriaDto);
+                var result = "";
+                if (_iCategoriaService.IsValid())
+                {
+                    result = "Categoria alterada com sucesso.";
+                }
+                return await ResponseAsync(result, _iCategoriaService);
             }
             catch (Exception ex)
             {
@@ -91,7 +107,13 @@ namespace irede.api.Controllers
             try
             {
                 await _iCategoriaService.DeleteAsync(id);
-                return await ResponseAsync(null, _iCategoriaService);
+                
+                var result = "";
+                if (_iCategoriaService.IsValid())
+                {
+                    result = "Categoria excluída com sucesso.";
+                }
+                return await ResponseAsync(result, _iCategoriaService);
             }
             catch (Exception ex)
             {

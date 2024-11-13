@@ -1,4 +1,5 @@
-﻿using irede.shared.Notifications;
+﻿using irede.core.Dtos.Core;
+using irede.shared.Notifications;
 
 namespace irede.core.Entities
 {
@@ -7,7 +8,10 @@ namespace irede.core.Entities
         public int Id { get; private set; }
         public string Nome { get; private set; }
 
-        
+        public Categoria()
+        {
+                
+        }
         public Categoria(string nome)
         {
             Nome = nome;
@@ -18,6 +22,8 @@ namespace irede.core.Entities
         {
             Id = id;
             Nome = nome;
+            
+
         }
 
         public void SetId(int id)
@@ -32,5 +38,19 @@ namespace irede.core.Entities
             if (Nome.Length > 100)
                 AddNotification("O nome da categoria não pode exceder 100 caracteres.");
         }
+
+        public void ValidateUpdate()
+        {
+            if (Id <= 0)
+                AddNotification($"O Id da categoria é inválido.");
+
+            Validate();
+        }
+
+        public static explicit operator Categoria(CategoriaDto dto)
+        {
+            return new Categoria(dto.Id, dto.Nome);
+        }
+
     }
 }

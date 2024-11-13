@@ -21,31 +21,61 @@ builder.Services.AddCors(options =>
     });
 });
 
-//builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers();
+
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen();
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "irede.api",
+        Version = "v1.1",
+        Description = "API para o gerenciamento de produtos na iRede",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "Henrique Amorim",
+            Email = "henrique.amorim@gmail.com",
+            Url = new Uri("https://github.com/DuarteAmorim")
+        },
+
+    });
+});
+
 
 var app = builder.Build();
+
+// Habilitar CORS
+app.UseCors("AllowAllOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    //app.UseSwagger();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "IRede API v3");
+        options.DisplayRequestDuration();
+    }); ;
+
+    //app.UseSwaggerUI();
 }
 
-// Habilitar CORS
-app.UseCors("AllowAllOrigins");
+
+//app.UseHttpsRedirection();
+
+
+
 
 app.UseRouting();
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
-//app.Run("http://0.0.0.0:80");
 app.Run();

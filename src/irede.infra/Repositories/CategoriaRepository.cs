@@ -5,6 +5,7 @@ using irede.infra.Database;
 using irede.infra.Interfaces;
 using irede.shared.Extensions;
 using irede.shared.Notifications;
+using System.Data;
 
 namespace irede.infra.Repositories
 {
@@ -20,25 +21,7 @@ namespace irede.infra.Repositories
             _scriptCache = scriptCache;
         }
 
-        public async Task<Categoria> AddAsync(Categoria categoria)
-        {
-
-            var script = _scriptCache.GetScript("AddCategoria.sql").ToLower();
-            using (var dbConnection = _context.CreateConnection())
-            {
-                try
-                {
-                    dbConnection.Open();
-                    categoria.SetId(await dbConnection.QuerySingleAsync<int>(script, categoria));
-                    return categoria;
-                }
-                catch (Exception ex)
-                {
-                    AddNotification("Erro ao adicionar a categoria. Erro: {0}".ToFormat(ex.Message));
-                    return null;
-                }
-            }
-        }
+        
 
         public async Task<Categoria> GetByIdAsync(int id)
         {
@@ -49,11 +32,15 @@ namespace irede.infra.Repositories
                 {
                     dbConnection.Open();
 
-                    return await dbConnection.QueryFirstOrDefaultAsync<Categoria>(script, new { Id = id });
+                    var response = await dbConnection.QueryFirstOrDefaultAsync<Categoria>(script, new { Id = id });
+                    
+                    if (response==null) AddNotification("Categoria não encontrada.");
+
+                    return response;
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao obter a categoria por ID. Erro: {0}".ToFormat(ex.Message));
+                    AddNotification("Erro ao obter a categoria por ID. \nErro: {0}".ToFormat(ex.Message));
                     return null;
                 }
             }
@@ -66,18 +53,42 @@ namespace irede.infra.Repositories
             {
                 try
                 {
-                    dbConnection.Open();
+                    if (dbConnection.State == ConnectionState.Closed) dbConnection.Open();
+
+
+                    //dbConnection.Open();
                     var result = await dbConnection.QueryAsync<Categoria>(script);
                     return result;
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao obter todas as categorias. Erro: {0}".ToFormat(ex.Message));
+                    AddNotification("Erro ao obter todas as categorias. \nErro: {0}".ToFormat(ex.Message));
                     return null;
                 }
             }
         }
 
+        public async Task<Categoria> AddAsync(Categoria categoria)
+        {
+            var script = _scriptCache.GetScript("AddCategoria.sql").ToLower();
+
+            using (var dbConnection = _context.CreateConnection())
+            {
+                try
+                {
+                    if (dbConnection.State == ConnectionState.Closed) dbConnection.Open();
+
+                    categoria.SetId(await dbConnection.QuerySingleAsync<int>(script, categoria));
+                    return categoria;
+                }
+                catch (Exception ex)
+                {
+                    AddNotification("Erro ao adicionar a categoria. \nErro: {0}".ToFormat(ex.Message));
+                    return null;
+
+                }
+            }
+        }
         public async Task UpdateAsync(Categoria categoria)
         {
             var script = _scriptCache.GetScript("UpdateCategoria.sql").ToLower();
@@ -96,7 +107,7 @@ namespace irede.infra.Repositories
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao atualizar a categoria. Erro: {0}".ToFormat(ex.Message));
+                    AddNotification("Erro ao atualizar a categoria. \nErro: {0}".ToFormat(ex.Message));
                     return;
                 }
             }
@@ -120,7 +131,7 @@ namespace irede.infra.Repositories
                 }
                 catch (Exception ex)
                 {
-                    AddNotification("Erro ao deletar a categoria. Erro: {0}".ToFormat(ex.Message));
+                    AddNotification("Erro ao deletar a categoria. \nErro: {0}".ToFormat(ex.Message));
                     return;
                 }
             }

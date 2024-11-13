@@ -1,4 +1,5 @@
-﻿using irede.core.Entities;
+﻿using irede.core.Dtos.Core;
+using irede.core.Entities;
 using irede.core.Interfaces.Repositories;
 using irede.core.Interfaces.Services;
 using irede.shared.Notifications;
@@ -41,74 +42,130 @@ namespace irede.application.Services
             catch (Exception ex)
             {
                 AddNotifications(_categoriaRepository?.Notifications);
-                throw;
+                return null;
             }
         }
 
-        public async Task<Categoria> AddAsync(Categoria categoria)
+        public async Task<Categoria> AddAsync(CategoriaDto categoriaDto)
         {
-            // Validações e regras de negócio
-            categoria.Validate();
-            if (!categoria.IsValid())
+            try
             {
-                AddNotifications(categoria.Notifications);
+                var newCategoria = (Categoria)categoriaDto;
+                newCategoria.Validate();
+
+                if (!newCategoria.IsValid())
+                {
+                    AddNotifications(newCategoria.Notifications);
+                    return null;
+                }
+
+                var response = await _categoriaRepository.AddAsync(newCategoria);
+                if (!_categoriaRepository.IsValid())
+                    AddNotifications(_categoriaRepository.Notifications);
+
+                return response;
+            }
+            catch (Exception)
+            {
+                AddNotifications(_categoriaRepository.Notifications);
                 return null;
             }
 
-            return await _categoriaRepository.AddAsync(categoria);
         }
 
-        public async Task UpdateAsync(Categoria categoria)
+        public async Task UpdateAsync(CategoriaDto categoriaDto)
         {
-            // Validações e regras de negócio
-            categoria.Validate();
-            if (!categoria.IsValid())
+            try
             {
-                AddNotifications(categoria.Notifications);
-                return;
-            }
+                var updateCategoria = (Categoria)categoriaDto;
 
-            // Verificar se a categoria existe
-            var existingCategoria = await _categoriaRepository.GetByIdAsync(categoria.Id);
-            if (existingCategoria == null)
+                // Validações e regras de negócio
+                updateCategoria.ValidateUpdate();
+                if (!updateCategoria.IsValid())
+                {
+                    AddNotifications(updateCategoria.Notifications);
+                    return;
+                }
+
+                // Verificar se a categoria existe
+                var existingCategoria = await _categoriaRepository.GetByIdAsync(updateCategoria.Id);
+                if (existingCategoria == null)
+                {
+                    AddNotification("Categoria não encontrada.");
+                    return;
+                }
+                await _categoriaRepository.UpdateAsync(updateCategoria);
+                if (!_categoriaRepository.IsValid())
+                {
+                    AddNotifications(_categoriaRepository.Notifications);
+                }
+            }
+            catch (Exception)
             {
-                AddNotification("Categoria não encontrada.");
+                AddNotifications(_categoriaRepository.Notifications);
                 return;
             }
-            await _categoriaRepository.UpdateAsync(categoria);
         }
 
-        public async Task UpdatePartialAsync(Categoria categoria)
+        public async Task UpdatePartialAsync(CategoriaDto categoriaDto)
         {
-            // Verificar se a categoria existe
-            var existingCategoria = await _categoriaRepository.GetByIdAsync(categoria.Id);
-            if (existingCategoria == null)
+            try
             {
-                AddNotification("Categoria não encontrada.");
+                var updateCategoria = (Categoria)categoriaDto;
+
+                // Validações e regras de negócio
+                updateCategoria.ValidateUpdate();
+                if (!updateCategoria.IsValid())
+                {
+                    AddNotifications(updateCategoria.Notifications);
+                    return;
+                }
+
+                // Verificar se a categoria existe
+                var existingCategoria = await _categoriaRepository.GetByIdAsync(updateCategoria.Id);
+                if (existingCategoria == null)
+                {
+                    AddNotification("Categoria não encontrada.");
+                    return;
+                }
+
+                await _categoriaRepository.UpdateAsync(updateCategoria);
+                if (!_categoriaRepository.IsValid())
+                {
+                    AddNotifications(_categoriaRepository.Notifications);
+                }
+            }
+            catch (Exception)
+            {
+                AddNotifications(_categoriaRepository.Notifications);
                 return;
             }
-
-            categoria.Validate();
-            if (!categoria.IsValid())
-            {
-                AddNotifications(categoria.Notifications);
-                return;
-            }
-
-            await _categoriaRepository.UpdateAsync(categoria);
         }
 
         public async Task DeleteAsync(int id)
         {
-            // Verificar se a categoria existe
-            var existingCategoria = await _categoriaRepository.GetByIdAsync(id);
-            if (existingCategoria == null)
+            try
             {
-                AddNotification("Categoria não encontrada.");
+
+                // Verificar se a categoria existe
+                var existingCategoria = await _categoriaRepository.GetByIdAsync(id);
+                if (existingCategoria == null)
+                {
+                    AddNotification("Categoria não encontrada.");
+                    return;
+                }
+
+                await _categoriaRepository.DeleteAsync(id);
+                if (!_categoriaRepository.IsValid())
+                {
+                    AddNotifications(_categoriaRepository.Notifications);
+                }
+            }
+            catch (Exception)
+            {
+                AddNotifications(_categoriaRepository.Notifications);
                 return;
             }
-
-            await _categoriaRepository.DeleteAsync(id);
         }
 
         public void Dispose()
