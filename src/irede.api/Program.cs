@@ -33,7 +33,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "irede.api",
-        Version = "v1.1",
+        Version = "v1.2",
         Description = "API para o gerenciamento de produtos na iRede",
         Contact = new Microsoft.OpenApi.Models.OpenApiContact
         {
