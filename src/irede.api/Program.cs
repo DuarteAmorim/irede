@@ -33,7 +33,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "irede.api",
-        Version = "v1.2",
+        Version = "v1.1",
         Description = "API para o gerenciamento de produtos na iRede",
         Contact = new Microsoft.OpenApi.Models.OpenApiContact
         {
@@ -56,21 +56,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     //app.UseSwagger();
-    //app.UseSwagger();
-    //app.UseSwaggerUI(options =>
-    //{
-    //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "IRede API v3");
-    //    options.DisplayRequestDuration();
-    //}); ;
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "IRede API v3");
+        options.DisplayRequestDuration();
+    }); ;
 
     //app.UseSwaggerUI();
 }
-app.UseSwagger();
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "IRede API v4");
-    options.DisplayRequestDuration();
-}); ;
+
 
 //app.UseHttpsRedirection();
 

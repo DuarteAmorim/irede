@@ -11,7 +11,8 @@ services:
             # - "8081:8081" #https
         container_name: irede-api
         environment:
-            # - ConnectionStrings__DefaultConnection=Server=irededb;port=3306;database=iredeDb;uid=root;password=root;
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_URLS=http://+:8080
             - ConnectionStrings__DefaultConnection=Server=irededb;Port=3306;Database=iredeDb;Uid=root;Pwd=root;
 
         depends_on:
